@@ -1,6 +1,6 @@
 # Shopify Blog Writer
 
-An end-to-end Shopify blog pipeline plugin — draft posts from an Excel tracker with detailed content briefs, generate AI featured images, and upload everything to your store.
+An end-to-end Shopify blog pipeline plugin for Claude — draft posts from an Excel tracker with detailed content briefs, generate AI featured images, and upload everything to your store.
 
 ## What It Does
 
@@ -9,26 +9,51 @@ An end-to-end Shopify blog pipeline plugin — draft posts from an Excel tracker
 - **Upload** articles with images to your Shopify store via the Admin API
 - **Track** progress in an Excel spreadsheet with automatic status updates
 
-## Architecture
+## Install
 
-This plugin uses the right component type for each job:
+### In Claude Desktop (Cowork)
 
-| Component | Type | Purpose |
-|-----------|------|---------|
-| **brand-setup** | Skill | Complete plugin setup — company info, credentials, tracker, product docs |
-| **company-info** | Skill | Brand knowledge — product catalog, website URL, brand voice guidelines |
-| **blog-drafting** | Skill | Writing expertise — SEO rules, format templates, content brief interpretation |
-| **blog-pipeline** | Command | Orchestrator — reads tracker, coordinates drafting/image/upload, updates status |
-| **image-generator** | Agent | Autonomous image creation — analyzes blog, crafts prompt, calls API |
-| **shopify-uploader** | Agent | Autonomous upload — assembles payload, pushes to Shopify API |
+1. Open **Settings** > **Customize** > **Browse plugins**
+2. Go to the **Personal** tab
+3. Click **Add marketplace**
+4. Enter: `JithinBathula/Shopify-Blog-Writer-Claude-Plugin`
+5. Click **Sync**
+6. Find **Shopify Blog Writer** in the marketplace and click **Install**
 
-Three Python scripts handle all deterministic work (API calls, Excel read/write):
+### In Claude Code (CLI)
 
-| Script | What It Does |
-|--------|-------------|
-| `scripts/read_tracker.py` | Read next eligible row, update status, mark done |
-| `scripts/generate_image.py` | Call OpenRouter API, extract base64 PNG, save to disk |
-| `scripts/upload_to_shopify.py` | Authenticate with Shopify, upload article with image and SEO metadata |
+```bash
+# Add the marketplace
+/plugin marketplace add JithinBathula/Shopify-Blog-Writer-Claude-Plugin
+
+# Install the plugin
+/plugin install shopify-blog-writer@jithinbathula-shopify-blog-writer-claude-plugin
+```
+
+## Setup
+
+After installing, tell Claude:
+
+> "Set up my brand" or "Configure the plugin" or "Initialize the blog writer"
+
+This walks you through everything in one conversation:
+
+1. **Company & Products** — your brand name, website URL, and product catalog
+2. **Brand Voice** — tone, audience, language style, differentiators
+3. **Credentials** — Shopify API keys and OpenRouter API key (saved to `.env`)
+4. **Blog Tracker** — creates your `blog-tracker.xlsx` with all 18 columns
+5. **Product Documents** — identifies dossiers, spec sheets, or reference files in your workspace
+
+After setup, you're ready to run `/blog-pipeline` immediately.
+
+To update settings later, just say "update my brand setup" — you can change individual fields without redoing everything.
+
+### Credentials You'll Need
+
+- **Shopify:** Go to partners.shopify.com > your app > Settings. The app needs `write_content` scope. Copy the Client ID and Client Secret.
+- **OpenRouter:** Go to openrouter.ai > Settings > API Keys. Create a key (starts with `sk-or-v1-`). Used for AI image generation.
+
+The setup skill will ask for these and save them to a `.env` file in your workspace.
 
 ## Usage
 
@@ -40,32 +65,45 @@ The main way to use this plugin. Add rows to your Excel tracker, then run:
 - `/blog-pipeline all` — process all pending blogs sequentially
 - `/blog-pipeline 3` — process 3 blogs from the queue
 
-The pipeline reads from `Blog Articles/blog-tracker.xlsx`, picks the next row by Publishing Priority, drafts the post, generates a featured image, uploads to Shopify, and marks the row as done.
+The pipeline reads your tracker, picks the next row by Publishing Priority, drafts the post, generates a featured image, uploads to Shopify, and marks the row as done.
 
 ### Write a Blog Post (standalone)
-
-Ask Claude to write a blog post and it will load the company-info and blog-drafting skills automatically:
 
 - "Write a blog post about our new product launch"
 - "Draft a Shopify blog about choosing the right product for beginners"
 
 ### Generate a Featured Image (standalone)
 
-Ask Claude to generate a featured image and the image-generator agent handles it:
-
 - "Generate a featured image for this blog post"
 - "Create a hero image for the latest article"
 
 ### Upload to Shopify (standalone)
 
-Ask Claude to upload and the shopify-uploader agent handles it:
-
 - "Upload this blog post to Shopify"
 - "Push this article to the store"
 
+## Architecture
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| **brand-setup** | Skill | Complete plugin setup — company info, credentials, tracker, product docs |
+| **company-info** | Skill | Brand knowledge — product catalog, website URL, brand voice guidelines |
+| **blog-drafting** | Skill | Writing expertise — SEO rules, format templates, content brief interpretation |
+| **blog-pipeline** | Command | Orchestrator — reads tracker, coordinates drafting/image/upload, updates status |
+| **image-generator** | Agent | Autonomous image creation — analyzes blog, crafts prompt, calls API |
+| **shopify-uploader** | Agent | Autonomous upload — assembles payload, pushes to Shopify API |
+
+Three Python scripts handle deterministic work (API calls, Excel read/write):
+
+| Script | What It Does |
+|--------|-------------|
+| `scripts/read_tracker.py` | Read next eligible row, update status, mark done |
+| `scripts/generate_image.py` | Call OpenRouter API, extract base64 PNG, save to disk |
+| `scripts/upload_to_shopify.py` | Authenticate with Shopify, upload article with image and SEO metadata |
+
 ## The Excel Tracker
 
-The pipeline is driven by `Blog Articles/blog-tracker.xlsx`. Each row is a blog post.
+The pipeline is driven by a `blog-tracker.xlsx` file. Each row is a blog post.
 
 ### Core Columns
 
@@ -90,59 +128,13 @@ The pipeline is driven by `Blog Articles/blog-tracker.xlsx`. Each row is a blog 
 | **Strategic Rationale** | Why this article matters for the brand |
 | **Hidden Intent** | The emotional undercurrent driving the searcher |
 | **Key Arguments** | Mandatory talking points (must all appear in the article) |
-| **Product Tie-In** | Which products and protocol bundles to feature |
+| **Product Tie-In** | Which products and bundles to feature |
 | **Recommended Word Count** | Target word count (overrides Length if both present) |
 | **Recommended Structure** | Structural blueprint for the article |
 | **Publishing Priority** | Numeric priority (1 = publish first) |
 
-### Adding New Blog Ideas
+The content brief columns are optional but produce much better results when filled in. Add a row with at minimum **Title**, **Author**, and **Status** = `pending` or `planned`.
 
-Add a row with at minimum: **Title**, **Author**, and **Status** = `pending` or `planned`. The content brief columns are optional but produce much better results when filled in.
+## License
 
-## Setup
-
-### First-Time Setup (required)
-
-Run the complete setup by saying:
-
-- "Set up my brand" or "Configure the plugin" or "Initialize the blog writer"
-
-This walks you through everything in one go:
-
-1. **Company & Products** — your brand name, website URL, and product catalog
-2. **Brand Voice** — tone, audience, language style, differentiators
-3. **Credentials** — Shopify API keys and OpenRouter API key (saved to `.env`)
-4. **Blog Tracker** — creates or locates your `blog-tracker.xlsx` with all 18 columns
-5. **Product Documents** — identifies dossiers, spec sheets, or reference files in your workspace
-
-After setup, the plugin writes a configured `company-info` skill and a `.env` file — everything is ready to run `/blog-pipeline` immediately.
-
-See `examples/beme-company-info.md` for what a fully configured company-info looks like.
-
-To update settings later, just say "update my brand setup" — you can change individual fields without redoing everything.
-
-### Manual Setup (alternative)
-
-If you prefer to configure things by hand:
-
-1. Edit `skills/company-info/SKILL.md` directly (replace the `[TODO]` markers)
-2. Create a `.env` file in your workspace folder:
-   ```
-   SHOPIFY_STORE_URL=yourstore.myshopify.com
-   SHOPIFY_CLIENT_ID=your-client-id
-   SHOPIFY_CLIENT_SECRET=your-client-secret
-   OPENROUTER_API_KEY=sk-or-v1-your-key-here
-   ```
-3. Create or locate your `blog-tracker.xlsx`
-
-**Where to get credentials:**
-- Shopify: partners.shopify.com → your app → Settings (needs `write_content` scope)
-- OpenRouter: openrouter.ai → Settings → API Keys
-
-### Dependencies
-
-The scripts use only Python standard library modules (`urllib.request`, `json`, `base64`, `pathlib`, `argparse`). The only external dependency is `openpyxl` for Excel file handling:
-
-```bash
-pip install openpyxl
-```
+MIT
