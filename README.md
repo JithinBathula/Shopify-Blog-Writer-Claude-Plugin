@@ -1,82 +1,102 @@
 # Shopify Blog Writer
 
-A plugin that covers the full Shopify blog workflow — drafting posts, generating featured images, and uploading everything to your store.
+An end-to-end Shopify blog pipeline plugin — draft posts from an Excel tracker with detailed content briefs, generate AI featured images, and upload everything to your store.
 
 ## What It Does
 
-- **Draft** blog posts optimized for SEO and conversions, informed by product dossiers and live website data
+- **Draft** blog posts from an Excel tracker with full content briefs (target keywords, hidden intent, key arguments, recommended structure)
 - **Generate** photorealistic featured images using AI (Nano Banana 2 via OpenRouter)
-- **Upload** articles with images to your Shopify store as hidden drafts via the Admin API
+- **Upload** articles with images to your Shopify store via the Admin API
+- **Track** progress in an Excel spreadsheet with automatic status updates
 
-## Components
+## Architecture
 
-### Skills
+This plugin uses the right component type for each job:
 
-| Skill | What It Does | Trigger Phrases |
-|-------|-------------|----------------|
-| **company-info** | Central source of company context — website URL, product catalog, dossier locations, and brand voice | "what products do we have", "show me company info", "list our product catalog" |
-| **blog-drafting** | Draft blog posts with SEO metadata, informed by product dossiers and website | "write a blog post", "draft a Shopify blog", "create blog content" |
-| **blog-image-gen** | Generate realistic 3:2 featured images for blog posts | "generate a blog image", "create a featured image", "make a hero image" |
-| **shopify-upload** | Upload articles with images to Shopify as hidden drafts | "upload to Shopify", "publish blog to Shopify", "push articles to the store" |
-| **blog-pipeline** | Full orchestrator — reads Excel tracker, drafts, generates image, uploads, marks done | "run the blog pipeline", "process the next blog", "run the blog queue" |
+| Component | Type | Purpose |
+|-----------|------|---------|
+| **company-info** | Skill | Brand knowledge — product catalog, website URL, brand voice guidelines |
+| **blog-drafting** | Skill | Writing expertise — SEO rules, format templates, content brief interpretation |
+| **blog-pipeline** | Command | Orchestrator — reads tracker, coordinates drafting/image/upload, updates status |
+| **image-generator** | Agent | Autonomous image creation — analyzes blog, crafts prompt, calls API |
+| **shopify-uploader** | Agent | Autonomous upload — assembles payload, pushes to Shopify API |
 
-### How Skills Work Together
+Three Python scripts handle all deterministic work (API calls, Excel read/write):
 
-The **company-info** skill acts as the shared knowledge base. When **blog-drafting** is triggered, it first loads company-info to discover product dossiers in the workspace, fetch the website for current product URLs and pricing, and apply brand voice guidelines. This means blog content is always grounded in real product data and links to live product pages.
-
-The **blog-pipeline** skill ties everything together. It reads from an Excel tracker spreadsheet (`Blog Articles/blog-tracker.xlsx`), picks the next pending blog idea, and runs the full pipeline automatically: drafting → image generation → Shopify upload → update tracker. Add new rows to the spreadsheet, run the pipeline, and your blog posts are created end-to-end.
+| Script | What It Does |
+|--------|-------------|
+| `scripts/read_tracker.py` | Read next eligible row, update status, mark done |
+| `scripts/generate_image.py` | Call OpenRouter API, extract base64 PNG, save to disk |
+| `scripts/upload_to_shopify.py` | Authenticate with Shopify, upload article with image and SEO metadata |
 
 ## Usage
 
-### Writing a Blog Post
+### Run the Blog Pipeline
 
-Ask Claude to write a blog post and it will automatically:
-1. Load company context (website, product catalog, brand voice)
-2. Read relevant product dossiers from your workspace for scientific claims and details
-3. Fetch the live website for current product URLs and pricing
-4. Guide you through providing the right details (topic, audience, keywords, tone)
-5. Draft a complete post with SEO metadata and real product hyperlinks
+The main way to use this plugin. Add rows to your Excel tracker, then run:
 
-**Example prompts:**
-- "Write a blog post about summer skincare routines for our beauty store"
-- "Draft a buying guide for standing desks"
+- `/blog-pipeline` — process the next pending blog
+- `/blog-pipeline all` — process all pending blogs sequentially
+- `/blog-pipeline 3` — process 3 blogs from the queue
 
-### Generating a Featured Image
+The pipeline reads from `Blog Articles/blog-tracker.xlsx`, picks the next row by Publishing Priority, drafts the post, generates a featured image, uploads to Shopify, and marks the row as done.
 
-Ask Claude to generate a featured image for your blog post. It will analyse the blog content and create a photorealistic 3:2 image using Nano Banana 2 via OpenRouter.
+### Write a Blog Post (standalone)
 
-**Example prompts:**
+Ask Claude to write a blog post and it will load the company-info and blog-drafting skills automatically:
+
+- "Write a blog post about collagen for joint health"
+- "Draft a Shopify blog about recovery supplements for athletes"
+
+### Generate a Featured Image (standalone)
+
+Ask Claude to generate a featured image and the image-generator agent handles it:
+
 - "Generate a featured image for this blog post"
-- "Create a hero image for the wellness supplements article"
+- "Create a hero image for the wellness article"
 
-### Uploading to Shopify
+### Upload to Shopify (standalone)
 
-Ask Claude to upload your blog posts to Shopify. It will push articles as hidden (unpublished) drafts with full SEO metadata, and attach featured images with alt text if available.
+Ask Claude to upload and the shopify-uploader agent handles it:
 
-**Example prompts:**
-- "Upload these blog posts to my Shopify store"
-- "Push the articles with images to Shopify as drafts"
+- "Upload this blog post to Shopify"
+- "Push this article to the store"
 
-**Important notes:**
-- All posts are uploaded as **hidden by default** — you publish them manually from Shopify Admin
-- The title is NOT duplicated in the article body (Shopify renders it separately)
-- Featured images include descriptive alt text for SEO and accessibility
+## The Excel Tracker
 
-### Running the Blog Pipeline
+The pipeline is driven by `Blog Articles/blog-tracker.xlsx`. Each row is a blog post.
 
-The easiest way to create blog posts end-to-end. Add rows to the Excel tracker and let the pipeline handle everything.
+### Core Columns
 
-**Setup:**
-1. Open `Blog Articles/blog-tracker.xlsx` in your workspace
-2. Add a new row with at minimum: Title, Author, and Status = `pending`
-3. Optionally fill in: Length (short, standard, or long-form)
-4. Ask Claude to run the pipeline
+| Column | Description |
+|--------|-------------|
+| **#** | Row number |
+| **Title** | Blog post title |
+| **Author** | Author name |
+| **Length** | short / standard / medium-form / long-form |
+| **Status** | planned / pending / in-progress / done |
+| **Shopify ID** | Article ID (filled by pipeline) |
+| **Shopify URL** | URL handle (filled by pipeline) |
+| **Completed Date** | Date processed (filled by pipeline) |
 
-**Example prompts:**
-- "Run the blog pipeline" — processes the next pending blog
-- "Process all pending blogs" — runs the full queue sequentially
+### Content Brief Columns (optional)
 
-The pipeline will draft the post, generate a featured image, upload to Shopify as a visible post, and mark the row as done in the tracker.
+| Column | Description |
+|--------|-------------|
+| **Format** | Comparison, Ranked list, How-to guide, Topic guide |
+| **Target Keyword** | Primary and secondary SEO keywords (separated by " / ") |
+| **Gap Type** | Content gap: Competitive, Audience, Depth, Timing |
+| **Strategic Rationale** | Why this article matters for the brand |
+| **Hidden Intent** | The emotional undercurrent driving the searcher |
+| **Key Arguments** | Mandatory talking points (must all appear in the article) |
+| **Product Tie-In** | Which products and protocol bundles to feature |
+| **Recommended Word Count** | Target word count (overrides Length if both present) |
+| **Recommended Structure** | Structural blueprint for the article |
+| **Publishing Priority** | Numeric priority (1 = publish first) |
+
+### Adding New Blog Ideas
+
+Add a row with at minimum: **Title**, **Author**, and **Status** = `pending` or `planned`. The content brief columns are optional but produce much better results when filled in.
 
 ## Setup
 
@@ -101,3 +121,11 @@ OPENROUTER_API_KEY=sk-or-v1-your-key-here
 ### Product Dossiers
 
 Place your product dossier documents (`.docx`, `.pdf`) in your workspace folder. The blog-drafting skill will automatically discover and read them when writing content related to those products.
+
+### Dependencies
+
+The scripts use only Python standard library modules (`urllib.request`, `json`, `base64`, `pathlib`, `argparse`). The only external dependency is `openpyxl` for Excel file handling:
+
+```bash
+pip install openpyxl
+```

@@ -1,7 +1,7 @@
 {
   "name": "shopify-blog-writer",
-  "version": "0.4.0",
-  "description": "Draft high-converting Shopify blog posts with SEO optimization, brand-consistent tone, and e-commerce best practices",
+  "version": "0.5.0",
+  "description": "End-to-end Shopify blog pipeline — draft posts from an Excel tracker, generate AI featured images, and upload to your store",
   "author": {
     "name": "edvance"
   },
@@ -11,6 +11,8 @@
     "copywriting",
     "ecommerce",
     "seo",
-    "content"
+    "content",
+    "pipeline",
+    "image-generation"
   ]
 }

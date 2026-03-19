@@ -1,0 +1,20 @@
+# Environment files with credentials
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Generated images (these are per-run outputs, not part of the plugin)
+*.png
+*.jpg
+*.jpeg
+
+# Temporary files
+*.tmp
