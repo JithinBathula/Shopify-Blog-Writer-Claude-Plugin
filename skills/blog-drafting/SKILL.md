@@ -46,7 +46,7 @@ After loading company context, gather these details. **When called from the blog
 - **Format** — the article format shapes the entire structure (see "Format-Specific Structures" below)
 - **Hidden Intent** — the emotional undercurrent driving the searcher. This is critical for the introduction: don't open with a generic hook, open by directly addressing what the reader is feeling (skepticism, fear, frustration, decision fatigue, etc.)
 - **Key Arguments** — mandatory content beats. Every argument listed must appear in the article body. Treat this as a checklist.
-- **Strategic Rationale** — why this article exists for the brand. Informs how aggressively to position BeMe (defensive vs offensive) and the narrative tension.
+- **Strategic Rationale** — why this article exists for the brand. Informs how aggressively to position the brand (defensive vs offensive) and the narrative tension.
 - **Gap Type** — what content gap this fills. "Competitive gap" means competitors own this topic; "Audience gap" means an underserved reader segment.
 - **Product Tie-In** — which specific products and protocol bundles to feature and hyperlink. "Full range" = mention all products; specific names = focus on those.
 - **Recommended Structure** — a structural blueprint that overrides the default blog structure below. Follow it directly.
@@ -116,7 +116,7 @@ After the post body, provide:
 ### Using Product Dossier Data
 - Ground claims in the clinical studies and scientific references found in the product dossiers
 - Cite specific outcomes (e.g., percentages, study populations, durations) to build credibility
-- Reference the branded collagen peptide technologies by name when relevant — they differentiate the products
+- Reference any branded ingredients, proprietary technologies, or unique product features by name when relevant — they differentiate the products
 - Never fabricate or exaggerate study results — use only what the dossiers and published research support
 
 ### SEO Best Practices

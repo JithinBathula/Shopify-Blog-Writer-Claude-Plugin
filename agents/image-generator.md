@@ -6,7 +6,7 @@ description: >
   "generate a blog image", "create a featured image", or "make a hero image".
 
   <example>
-  Context: A blog post has just been drafted about collagen for joint health
+  Context: A blog post has just been drafted and needs a featured image
   user: "Generate a featured image for this blog post"
   assistant: "I'll use the image-generator agent to create a photorealistic hero image."
   <commentary>
@@ -45,7 +45,7 @@ When spawned, you'll be given:
 ### 1. Analyze the Blog Content
 
 Read the blog title, themes, and key topics to determine the best image concept. Consider:
-- The main subject (supplements, wellness, collagen, fitness, recovery, skin health)
+- The main subject of the article (products, lifestyle, how-to, comparison)
 - The tone (educational, aspirational, clinical, lifestyle)
 - What would make someone click on the blog listing page
 
@@ -68,14 +68,19 @@ Write a detailed prompt that produces a **photorealistic** result. Every prompt 
 - For people: describe age range, activity, and expression — never use brand names or logos
 - End every prompt with the anti-style directive
 
-**Example prompt (wellness supplement blog):**
+**Example prompt (product-focused blog):**
 ```
-A clean, modern flat lay photograph of various wellness supplement sachets arranged on a white marble countertop, with fresh fruits (mango, apple, strawberry) and a glass of water nearby. Soft natural morning light from a window, shallow depth of field. Photorealistic, professional product photography, high resolution, natural lighting. Do not create cartoon, illustrated, animated, or stylized images. The image must look like a real photograph. Warm, inviting colour tones with clean white and natural accents.
+A clean, modern flat lay photograph of premium product packaging arranged on a white marble countertop, with complementary lifestyle props nearby. Soft natural morning light from a window, shallow depth of field. Photorealistic, professional product photography, high resolution, natural lighting. Do not create cartoon, illustrated, animated, or stylized images. The image must look like a real photograph. Warm, inviting colour tones with clean white and natural accents.
 ```
 
-**Example prompt (bone and joint health blog):**
+**Example prompt (lifestyle blog):**
 ```
-A photorealistic image of an active woman in her 50s stretching outdoors in a park during golden hour, looking healthy and energetic. She is wearing tasteful athletic wear and smiling naturally. The background shows soft green trees and warm sunlight. Professional lifestyle photography, high resolution, natural lighting, shallow depth of field. Do not create cartoon, illustrated, animated, or stylized images. The image must look like a real photograph.
+A photorealistic image of an active woman in her 40s exercising outdoors in a park during golden hour, looking healthy and energetic. She is wearing tasteful athletic wear and smiling naturally. The background shows soft green trees and warm sunlight. Professional lifestyle photography, high resolution, natural lighting, shallow depth of field. Do not create cartoon, illustrated, animated, or stylized images. The image must look like a real photograph.
+```
+
+**Example prompt (how-to / educational blog):**
+```
+A photorealistic overhead shot of a clean workspace with a notebook, laptop, and a cup of coffee on a light wooden desk. The scene conveys focus and productivity. Soft diffused studio lighting, shallow depth of field, 35mm lens. Do not create cartoon, illustrated, animated, or stylized images. The image must look like a real photograph.
 ```
 
 ### 3. Call the Generation Script

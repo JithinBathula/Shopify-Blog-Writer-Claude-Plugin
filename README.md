@@ -15,6 +15,7 @@ This plugin uses the right component type for each job:
 
 | Component | Type | Purpose |
 |-----------|------|---------|
+| **brand-setup** | Skill | First-time setup — interviews the user and writes the company-info file |
 | **company-info** | Skill | Brand knowledge — product catalog, website URL, brand voice guidelines |
 | **blog-drafting** | Skill | Writing expertise — SEO rules, format templates, content brief interpretation |
 | **blog-pipeline** | Command | Orchestrator — reads tracker, coordinates drafting/image/upload, updates status |
@@ -45,15 +46,15 @@ The pipeline reads from `Blog Articles/blog-tracker.xlsx`, picks the next row by
 
 Ask Claude to write a blog post and it will load the company-info and blog-drafting skills automatically:
 
-- "Write a blog post about collagen for joint health"
-- "Draft a Shopify blog about recovery supplements for athletes"
+- "Write a blog post about our new product launch"
+- "Draft a Shopify blog about choosing the right product for beginners"
 
 ### Generate a Featured Image (standalone)
 
 Ask Claude to generate a featured image and the image-generator agent handles it:
 
 - "Generate a featured image for this blog post"
-- "Create a hero image for the wellness article"
+- "Create a hero image for the latest article"
 
 ### Upload to Shopify (standalone)
 
@@ -99,6 +100,16 @@ The pipeline is driven by `Blog Articles/blog-tracker.xlsx`. Each row is a blog 
 Add a row with at minimum: **Title**, **Author**, and **Status** = `pending` or `planned`. The content brief columns are optional but produce much better results when filled in.
 
 ## Setup
+
+### Brand Setup (required first time)
+
+Before using the plugin, configure it for your store by running the brand setup:
+
+- "Set up my brand" or "Configure my store for the blog writer"
+
+This walks you through providing your company name, website URL, product catalog, brand voice, tone, and target audience. It writes the `company-info` skill so all other components know about your brand. You can also edit `skills/company-info/SKILL.md` directly if you prefer.
+
+See `examples/beme-company-info.md` for a fully filled-out example.
 
 ### Credentials
 
