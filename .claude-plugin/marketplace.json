@@ -3,11 +3,17 @@
   "owner": {
     "name": "edvance"
   },
+  "metadata": {
+    "description": "End-to-end Shopify blog pipeline plugin",
+    "version": "1.0.0"
+  },
   "plugins": [
     {
       "name": "shopify-blog-writer",
-      "source": ".",
-      "description": "End-to-end Shopify blog pipeline — draft posts from an Excel tracker, generate AI featured images, and upload to your store"
+      "source": "./",
+      "description": "End-to-end Shopify blog pipeline - draft posts from an Excel tracker, generate AI featured images, and upload to your store",
+      "category": "ecommerce",
+      "tags": ["shopify", "blog", "copywriting", "ecommerce", "seo", "content", "pipeline"]
     }
   ]
 }
