@@ -15,7 +15,7 @@ This plugin uses the right component type for each job:
 
 | Component | Type | Purpose |
 |-----------|------|---------|
-| **brand-setup** | Skill | First-time setup — interviews the user and writes the company-info file |
+| **brand-setup** | Skill | Complete plugin setup — company info, credentials, tracker, product docs |
 | **company-info** | Skill | Brand knowledge — product catalog, website URL, brand voice guidelines |
 | **blog-drafting** | Skill | Writing expertise — SEO rules, format templates, content brief interpretation |
 | **blog-pipeline** | Command | Orchestrator — reads tracker, coordinates drafting/image/upload, updates status |
@@ -101,37 +101,43 @@ Add a row with at minimum: **Title**, **Author**, and **Status** = `pending` or 
 
 ## Setup
 
-### Brand Setup (required first time)
+### First-Time Setup (required)
 
-Before using the plugin, configure it for your store by running the brand setup:
+Run the complete setup by saying:
 
-- "Set up my brand" or "Configure my store for the blog writer"
+- "Set up my brand" or "Configure the plugin" or "Initialize the blog writer"
 
-This walks you through providing your company name, website URL, product catalog, brand voice, tone, and target audience. It writes the `company-info` skill so all other components know about your brand. You can also edit `skills/company-info/SKILL.md` directly if you prefer.
+This walks you through everything in one go:
 
-See `examples/beme-company-info.md` for a fully filled-out example.
+1. **Company & Products** — your brand name, website URL, and product catalog
+2. **Brand Voice** — tone, audience, language style, differentiators
+3. **Credentials** — Shopify API keys and OpenRouter API key (saved to `.env`)
+4. **Blog Tracker** — creates or locates your `blog-tracker.xlsx` with all 18 columns
+5. **Product Documents** — identifies dossiers, spec sheets, or reference files in your workspace
 
-### Credentials
+After setup, the plugin writes a configured `company-info` skill and a `.env` file — everything is ready to run `/blog-pipeline` immediately.
 
-Add these to a `.env` file in your working folder:
+See `examples/beme-company-info.md` for what a fully configured company-info looks like.
 
-```
-# Shopify (for uploading posts)
-SHOPIFY_STORE_URL=yourstore.myshopify.com
-SHOPIFY_CLIENT_ID=your-client-id
-SHOPIFY_CLIENT_SECRET=your-client-secret
+To update settings later, just say "update my brand setup" — you can change individual fields without redoing everything.
 
-# OpenRouter (for image generation)
-OPENROUTER_API_KEY=sk-or-v1-your-key-here
-```
+### Manual Setup (alternative)
 
-**Where to get these:**
-- Shopify credentials: partners.shopify.com → your app → Settings (app must have `write_content` scope)
-- OpenRouter API key: openrouter.ai → Settings → API Keys
+If you prefer to configure things by hand:
 
-### Product Dossiers
+1. Edit `skills/company-info/SKILL.md` directly (replace the `[TODO]` markers)
+2. Create a `.env` file in your workspace folder:
+   ```
+   SHOPIFY_STORE_URL=yourstore.myshopify.com
+   SHOPIFY_CLIENT_ID=your-client-id
+   SHOPIFY_CLIENT_SECRET=your-client-secret
+   OPENROUTER_API_KEY=sk-or-v1-your-key-here
+   ```
+3. Create or locate your `blog-tracker.xlsx`
 
-Place your product dossier documents (`.docx`, `.pdf`) in your workspace folder. The blog-drafting skill will automatically discover and read them when writing content related to those products.
+**Where to get credentials:**
+- Shopify: partners.shopify.com → your app → Settings (needs `write_content` scope)
+- OpenRouter: openrouter.ai → Settings → API Keys
 
 ### Dependencies
 
