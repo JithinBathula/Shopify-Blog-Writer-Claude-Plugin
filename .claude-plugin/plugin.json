@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "End-to-end Shopify blog pipeline — draft posts from an Excel tracker, generate AI featured images, and upload to your store",
   "author": {
-    "name": "edvance"
+    "name": "Jithin Bathula"
   },
   "keywords": [
     "shopify",
