@@ -1,0 +1,13 @@
+{
+  "name": "shopify-blog-writer-marketplace",
+  "owner": {
+    "name": "edvance"
+  },
+  "plugins": [
+    {
+      "name": "shopify-blog-writer",
+      "source": ".",
+      "description": "End-to-end Shopify blog pipeline — draft posts from an Excel tracker, generate AI featured images, and upload to your store"
+    }
+  ]
+}
