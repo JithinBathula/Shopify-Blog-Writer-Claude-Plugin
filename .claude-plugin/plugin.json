@@ -1,0 +1,16 @@
+{
+  "name": "shopify-blog-writer",
+  "version": "0.4.0",
+  "description": "Draft high-converting Shopify blog posts with SEO optimization, brand-consistent tone, and e-commerce best practices",
+  "author": {
+    "name": "edvance"
+  },
+  "keywords": [
+    "shopify",
+    "blog",
+    "copywriting",
+    "ecommerce",
+    "seo",
+    "content"
+  ]
+}
