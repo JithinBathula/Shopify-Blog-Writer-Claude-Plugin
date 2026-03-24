@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "shopify-blog-writer",
-      "source": "./",
+      "source": "./plugins/shopify-blog-writer",
       "description": "End-to-end Shopify blog pipeline - draft posts from an Excel tracker, generate AI featured images, and upload to your store"
     }
   ]
