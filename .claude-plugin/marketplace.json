@@ -3,10 +3,6 @@
   "owner": {
     "name": "Jithin Bathula"
   },
-  "metadata": {
-    "description": "End-to-end Shopify blog pipeline plugin",
-    "version": "1.0.0"
-  },
   "plugins": [
     {
       "name": "shopify-blog-writer",
